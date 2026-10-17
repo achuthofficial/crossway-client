@@ -7,6 +7,7 @@ import { IconMorph, MotionProvider, useMotion, useTheme } from './motion';
 import Landing from './screens/Landing.jsx';
 import Modals from './components/Modals.jsx';
 import EdgeDrawer, { EDGE_COUNT } from './components/EdgeDrawer.jsx';
+import Notifications from './components/Notifications.jsx';
 import Home from './screens/Home.jsx';
 import Book from './screens/Book.jsx';
 import { Live, Timesheets, Workers } from './screens/Workforce.jsx';
@@ -115,6 +116,7 @@ function Portal() {
           </div>
           <div className="spacer" />
           <a className="btn btn-text" href="#/welcome"><Icon name="auto_stories" />Product tour</a>
+          <Notifications s={s} />
           <button
             type="button"
             className="icon-btn"

@@ -14,6 +14,20 @@ npm run preview  # serve dist/ locally
 
 Deploy `dist/` to any static host. Paths are relative and screens use hash URLs (`#/book`), so no rewrites are needed.
 
+## Site QR, attendance notifications and breaks
+
+On **Live**:
+
+- **Site check-in QR:** one per outlet, rotating every 30 s with a 6-digit fallback code. "Show on a tablet" opens it
+  full screen for the entrance. Workers scan it in the worker app to check in and out.
+- **Notifications:** every check-in, check-out, break and break overrun lands in the bell (top bar) with a toast.
+  You choose which types you get, and can turn on desktop alerts.
+- **Breaks:** 30 min by default for shifts over 5 h. Owners, HR and Site Managers can lengthen the break per outlet
+  (up to 90 min, in 15-min steps) but can't shorten it below the default.
+- **Demo events:** with no backend, worker scans are simulated: one arrives 15 s after the portal opens, and
+  "Simulate a worker scan" plays the rest.
+- **Shared code:** the QR format is `src/lib/checkinQr.js`, identical to the worker app's copy.
+
 ## Motion
 
 Confident Material 3 Expressive motion from the shared `design-tokens/`, through the TypeScript library in `src/motion/`:

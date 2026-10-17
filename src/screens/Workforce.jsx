@@ -4,6 +4,7 @@ import { AV, ini, NFG } from '../data.js';
 import { Act, Icon, itemVariants, PageHead, Stagger, Tag } from '../ui.jsx';
 import { useMotion } from '../motion';
 import { SkeletonShimmer, useFirstLoad } from '../motion';
+import { BreakSettings, SiteQrPanel } from '../components/SiteQr.jsx';
 
 /* ---------------- C6 Live workforce ---------------- */
 export function Live({ s }) {
@@ -24,11 +25,15 @@ export function Live({ s }) {
     return a;
   };
   const cnt = st => s.live.filter(w => w.status === st).length;
-  const stats = [['On site', cnt('On site'), '#34A853', 'var(--ok-bg)', 'var(--ok-fg)'], ['Late', cnt('Late'), '#FBBC04', 'var(--warn-bg)', 'var(--warn-fg)'], ['Absent', cnt('Absent'), '#EA4335', 'var(--bad-bg)', 'var(--bad-fg)'], ['Replacing', cnt('Replacement'), '#4285F4', 'var(--primary-soft)', 'var(--primary-dark)']];
+  const stats = [['On site', cnt('On site'), '#34A853', 'var(--ok-bg)', 'var(--ok-fg)'], ['Late', cnt('Late'), '#FBBC04', 'var(--warn-bg)', 'var(--warn-fg)'], ['Absent', cnt('Absent'), '#EA4335', 'var(--bad-bg)', 'var(--bad-fg)'], ['Replacing', cnt('Replacement'), '#4285F4', 'var(--primary-soft)', 'var(--primary-dark)'], ['On break', cnt('On break') + cnt('Break overrun'), '#A8C7FA', 'var(--surface-3)', 'var(--text)']];
 
   return (
     <div className="stack g20">
-      <PageHead eyebrow="C6 · Live workforce" title="Who's on site now" />
+      <PageHead eyebrow="C6 · Live workforce" title="Who's on site now" lead="Workers check in, take breaks and check out by scanning your site QR. You're notified of each one (bell, top right)." />
+      <div className="site-tools">
+        <SiteQrPanel s={s} />
+        <BreakSettings s={s} />
+      </div>
       <div className="row wrap g8">
         {stats.map(([l, n, dot, bg, fg]) => (
           <motion.div key={l} layout className="row g8" style={{ height: 36, padding: '0 14px', borderRadius: 18, background: bg, color: fg, fontSize: 14, fontWeight: 500 }}>
