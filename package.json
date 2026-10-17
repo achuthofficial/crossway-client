@@ -6,16 +6,23 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "tokens": "node design-tokens/build.mjs",
+    "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@fontsource-variable/roboto-flex": "^5.3.0",
+    "gsap": "^3.15.0",
     "motion": "^14.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
+    "@material/material-color-utilities": "^0.3.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
+    "typescript": "^5.9.3",
     "vite": "^8.3.4"
   }
 }

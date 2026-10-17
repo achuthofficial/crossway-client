@@ -14,6 +14,22 @@ npm run preview  # serve dist/ locally
 
 Deploy `dist/` to any static host. Paths are relative and screens use hash URLs (`#/book`), so no rewrites are needed.
 
+## Motion
+
+Confident Material 3 Expressive motion from the shared `design-tokens/`, through the TypeScript library in `src/motion/`:
+
+- **Product tour** (`#/welcome`, or "Product tour" in the top bar): a GSAP ScrollTrigger story in which candidates
+  flow from the talent pool through your pipeline as you scroll
+- **Kanban:** drag cards between stages with a spring, lift, tilt from velocity, and neighbours that reflow; dropping
+  on Hired sends out a burst
+- **Candidate → profile:** shared-element avatar and name
+- **Post a job:** three steps with shared axis X and a springing progress bar
+- Skeleton shimmer that crossfades into content; morphing pay and post buttons
+- Light and dark themes from the brand seed colour, with a circular reveal
+- `prefers-reduced-motion` turns movement into fades and shows the tour as a static board
+
+`npm run typecheck` checks the motion library. Spec, accessibility and performance docs: [`docs/motion/`](docs/motion/README.md).
+
 ## Screens
 
 | Code | Screen | Highlights |

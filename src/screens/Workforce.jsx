@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AV, ini, NFG } from '../data.js';
 import { Act, Icon, itemVariants, PageHead, Stagger, Tag } from '../ui.jsx';
+import { useMotion } from '../motion';
+import { SkeletonShimmer, useFirstLoad } from '../motion';
 
 /* ---------------- C6 Live workforce ---------------- */
 export function Live({ s }) {
+  const loading = useFirstLoad('live');
   const actions = w => {
     const a = [];
     if (w.kind === 'absent')
@@ -21,7 +24,7 @@ export function Live({ s }) {
     return a;
   };
   const cnt = st => s.live.filter(w => w.status === st).length;
-  const stats = [['On site', cnt('On site'), '#34A853', '#C4EED0', '#072711'], ['Late', cnt('Late'), '#FBBC04', '#FEEFC3', '#594300'], ['Absent', cnt('Absent'), '#EA4335', '#F9DEDC', '#410E0B'], ['Replacing', cnt('Replacement'), '#4285F4', '#D3E3FD', '#041E49']];
+  const stats = [['On site', cnt('On site'), '#34A853', 'var(--ok-bg)', 'var(--ok-fg)'], ['Late', cnt('Late'), '#FBBC04', 'var(--warn-bg)', 'var(--warn-fg)'], ['Absent', cnt('Absent'), '#EA4335', 'var(--bad-bg)', 'var(--bad-fg)'], ['Replacing', cnt('Replacement'), '#4285F4', 'var(--primary-soft)', 'var(--primary-dark)']];
 
   return (
     <div className="stack g20">
@@ -34,7 +37,8 @@ export function Live({ s }) {
           </motion.div>
         ))}
       </div>
-      <Stagger className="fill-grid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(290px,1fr))' }}>
+      <SkeletonShimmer loading={loading} lines={3} height={96} style={{ border: '1px solid var(--line)', borderRadius: 20 }}>
+        <Stagger className="fill-grid" style={{ gridTemplateColumns: 'repeat(auto-fill,minmax(290px,1fr))' }}>
         {s.live.map((w, i) => (
           <motion.div key={w.id} layout variants={itemVariants} className="card20" style={{ padding: 16, gap: 10 }}>
             <div className="row g12">
@@ -54,12 +58,14 @@ export function Live({ s }) {
           </motion.div>
         ))}
       </Stagger>
+      </SkeletonShimmer>
     </div>
   );
 }
 
 /* ---------------- C7 Timesheets ---------------- */
 export function Timesheets({ s }) {
+  const m = useMotion();
   const [sel, setSel] = useState({});
   const open = s.ts.filter(t => !t.done);
   const clean = open.filter(t => !t.locked && !t.ot && t.sev === 'ok');
@@ -83,13 +89,13 @@ export function Timesheets({ s }) {
       </PageHead>
       {!open.length ? (
         <motion.div className="banner ok" style={{ padding: 32, borderRadius: 20, fontSize: 16, alignItems: 'center' }} initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-          <motion.span initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ type: 'spring', delay: 0.15 }}><Icon name="task_alt" /></motion.span>
+          <motion.span initial={{ rotate: -90, scale: 0 }} animate={{ rotate: 0, scale: 1 }} transition={{ ...m.spatial('fast'), delay: 0.15 }}><Icon name="task_alt" /></motion.span>
           All caught up. Nothing waiting for you.
         </motion.div>
       ) : (
         <div className="list20">
           <label className="list-row small muted" style={{ cursor: 'pointer' }}>
-            <input type="checkbox" checked={allSel} onChange={() => { const n = {}; clean.forEach(t => (n[t.id] = !allSel)); setSel(n); }} style={{ width: 18, height: 18, accentColor: '#0B57D0' }} />
+            <input type="checkbox" checked={allSel} onChange={() => { const n = {}; clean.forEach(t => (n[t.id] = !allSel)); setSel(n); }} style={{ width: 18, height: 18, accentColor: 'var(--brand)' }} />
             <span>Select all clean timesheets</span>
           </label>
           <AnimatePresence initial={false}>
@@ -103,9 +109,9 @@ export function Timesheets({ s }) {
                   style={{ padding: '14px 18px', overflow: 'hidden' }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, x: 60, height: 0, paddingTop: 0, paddingBottom: 0, transition: { duration: 0.25 } }}
+                  exit={{ opacity: 0, x: 60, height: 0, paddingTop: 0, paddingBottom: 0, transition: m.spatial('fast') }}
                 >
-                  <input type="checkbox" checked={!!sel[t.id]} disabled={lock} onChange={() => setSel(x => ({ ...x, [t.id]: !x[t.id] }))} style={{ width: 18, height: 18, accentColor: '#0B57D0' }} />
+                  <input type="checkbox" checked={!!sel[t.id]} disabled={lock} onChange={() => setSel(x => ({ ...x, [t.id]: !x[t.id] }))} style={{ width: 18, height: 18, accentColor: 'var(--brand)' }} />
                   <div className="stack" style={{ flex: '1 1 200px' }}>
                     <span style={{ fontSize: 15, fontWeight: 500 }}>{t.name}</span>
                     <span className="small muted">{t.role} · {t.loc} · {t.date}</span>
@@ -131,6 +137,8 @@ export function Timesheets({ s }) {
 
 /* ---------------- C8 Workers ---------------- */
 export function Workers({ s }) {
+  const m = useMotion();
+  const loading = useFirstLoad('workers');
   return (
     <div className="stack g20">
       <PageHead
@@ -138,7 +146,8 @@ export function Workers({ s }) {
         title="Workers you've had"
         lead="Favourites are offered your shifts first. Blocked workers are never sent to you again; it doesn't affect pay for shifts they already worked."
       />
-      <Stagger className="list20">
+      <SkeletonShimmer loading={loading} lines={5} height={64} style={{ border: '1px solid var(--line)', borderRadius: 20 }}>
+        <Stagger className="list20">
         {s.workers.map((w, i) => (
           <motion.div key={w.id} variants={itemVariants} className="list-row" animate={{ opacity: w.blocked ? 0.55 : 1 }}>
             <div className="av" style={{ background: AV[i % AV.length] }}>{ini(w.name)}</div>
@@ -157,7 +166,7 @@ export function Workers({ s }) {
                   whileHover={{ scale: 1.25, rotate: 8 }}
                   whileTap={{ scale: 0.8 }}
                   onClick={() => { s.patchWorker(w.id, { rating: n }); if (n <= 2) s.say('Rated ' + n + '★. Tell us why so ops can follow up.'); }}
-                  style={{ color: n <= w.rating ? '#FBBC04' : '#C4C7C5' }}
+                  style={{ color: n <= w.rating ? '#FBBC04' : 'var(--line)' }}
                 >
                   <motion.span key={n <= w.rating ? 'on' : 'off'} initial={{ scale: 0.5 }} animate={{ scale: 1 }} className={'icon' + (n <= w.rating ? ' fill1' : '')}>star</motion.span>
                 </motion.button>
@@ -170,16 +179,16 @@ export function Workers({ s }) {
               disabled={w.blocked}
               whileTap={{ scale: 0.7 }}
               onClick={() => s.patchWorker(w.id, { fav: !w.fav })}
-              style={{ color: w.fav ? '#EA4335' : '#444746' }}
+              style={{ color: w.fav ? '#EA4335' : 'var(--muted)' }}
             >
-              <motion.span key={String(w.fav)} initial={{ scale: w.fav ? 1.6 : 0.8 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 500, damping: 12 }} className={'icon' + (w.fav ? ' fill1' : '')}>
+              <motion.span key={String(w.fav)} initial={{ scale: w.fav ? 1.6 : 0.8 }} animate={{ scale: 1 }} transition={m.spatial('fast')} className={'icon' + (w.fav ? ' fill1' : '')}>
                 favorite
               </motion.span>
             </motion.button>
             <button
               type="button"
               className="btn sm btn-outline"
-              style={{ color: w.blocked ? '#0B57D0' : '#B3261E' }}
+              style={{ color: w.blocked ? 'var(--brand)' : 'var(--danger)' }}
               onClick={() => (w.blocked ? (s.patchWorker(w.id, { blocked: false }), s.say(w.name + ' unblocked.')) : s.setModal({ kind: 'block', id: w.id }))}
             >
               {w.blocked ? 'Unblock' : 'Block'}
@@ -187,6 +196,7 @@ export function Workers({ s }) {
           </motion.div>
         ))}
       </Stagger>
+      </SkeletonShimmer>
     </div>
   );
 }

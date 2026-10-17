@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { Icon } from '../ui.jsx';
+import { useMotion } from '../motion';
 
 // [module, description, scenario]
 const EDGES = [
@@ -31,6 +32,7 @@ const EDGES = [
 export const EDGE_COUNT = EDGES.length;
 
 export default function EdgeDrawer({ s }) {
+  const m = useMotion();
   return (
     <AnimatePresence>
       {s.edgeOpen && (
@@ -40,7 +42,7 @@ export default function EdgeDrawer({ s }) {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', stiffness: 360, damping: 36 }}
+            transition={m.spatial('slow')}
             onClick={e => e.stopPropagation()}
           >
             <div className="row between" style={{ marginBottom: 8 }}>
@@ -56,7 +58,7 @@ export default function EdgeDrawer({ s }) {
                 onClick={() => s.scenario(p)}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.1 + i * 0.015 }}
+                transition={{ ...m.spatial(), delay: 0.08 + m.stagger(i) }}
               >
                 <span className="tag" style={{ background: 'var(--primary-soft)', color: 'var(--primary-dark)', marginTop: 1, padding: '3px 8px' }}>{mod}</span>
                 <span style={{ fontSize: 14, lineHeight: 1.4 }}>{l}</span>

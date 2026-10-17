@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { AV, T } from '../data.js';
 import { CountUp, Fill, Icon, itemVariants, Stagger } from '../ui.jsx';
+import { useMotion } from '../motion';
 
 export default function Home({ s }) {
+  const m = useMotion();
   const onSite = s.live.filter(w => w.status === 'On site').length;
   const openTs = s.ts.filter(t => !t.done && !t.locked).length;
 
@@ -16,10 +18,10 @@ export default function Home({ s }) {
   const setupDone = setup.filter(x => x[2]).length;
 
   const tiles = [
-    ['Book staff', 'add_circle', 'Book in 2 minutes', 'book', '#0B57D0', '#fff'],
-    [String(s.live.filter(w => w.sev === 'bad' || w.sev === 'warn').length), 'sensors', 'Need attention on site', 'live', '#F9DEDC', '#410E0B'],
-    [String(openTs), 'fact_check', 'Timesheets to approve', 'timesheets', '#FEEFC3', '#594300'],
-    ['₹2,14,720', 'receipt_long', 'Outstanding · 1 overdue', 'invoices', '#F0F4F9', '#1F1F1F'],
+    ['Book staff', 'add_circle', 'Book in 2 minutes', 'book', 'var(--brand)', 'var(--on-brand)'],
+    [String(s.live.filter(w => w.sev === 'bad' || w.sev === 'warn').length), 'sensors', 'Need attention on site', 'live', 'var(--bad-bg)', 'var(--bad-fg)'],
+    [String(openTs), 'fact_check', 'Timesheets to approve', 'timesheets', 'var(--warn-bg)', 'var(--warn-fg)'],
+    ['₹2,14,720', 'receipt_long', 'Outstanding · 1 overdue', 'invoices', 'var(--surface-2)', 'var(--text)'],
   ];
 
   const pools = [
@@ -48,10 +50,10 @@ export default function Home({ s }) {
               <h2 className="h18">Finish setting up</h2>
               <span className="small muted">{setupDone} of 5 done</span>
             </div>
-            <div className="track"><Fill width={setupDone * 20 + '%'} color="#0B57D0" /></div>
+            <div className="track"><Fill width={setupDone * 20 + '%'} color="var(--brand)" /></div>
             {setup.map(([l, sub, d]) => (
               <div key={l} className="row g12" style={{ padding: '6px 0' }}>
-                <Icon name={d ? 'check_circle' : 'radio_button_unchecked'} style={{ color: d ? '#146C2E' : '#747775' }} />
+                <Icon name={d ? 'check_circle' : 'radio_button_unchecked'} style={{ color: d ? 'var(--ok-text)' : 'var(--outline)' }} />
                 <div className="stack" style={{ flex: 1 }}>
                   <span style={{ fontSize: 14, fontWeight: 500 }}>{l}</span>
                   <span className="small muted">{sub}</span>
@@ -90,12 +92,14 @@ export default function Home({ s }) {
               <motion.div
                 key={b.id}
                 layout
-                initial={{ opacity: 0, x: -16, backgroundColor: '#D3E3FD' }}
-                animate={{ opacity: 1, x: 0, backgroundColor: 'rgba(255,255,255,0)' }}
-                transition={{ duration: 0.6 }}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={m.spatial()}
                 className="row g14"
-                style={{ padding: '10px 0', borderTop: '1px solid var(--line)' }}
+                style={{ padding: '10px 0', borderTop: '1px solid var(--line)', position: 'relative' }}
               >
+                {/* New bookings flash a highlight that fades (opacity only). */}
+                <motion.span aria-hidden style={{ position: 'absolute', inset: 0, background: 'var(--primary-soft)', borderRadius: 8, pointerEvents: 'none' }} initial={{ opacity: 0.8 }} animate={{ opacity: 0 }} transition={{ duration: 1.1 }} />
                 <div className="stack" style={{ width: 48, flex: 'none', alignItems: 'center', lineHeight: 1.1 }}>
                   <span className="xs muted">{b.dow}</span><span style={{ fontSize: 20 }}>{b.day}</span>
                 </div>
@@ -120,7 +124,7 @@ export default function Home({ s }) {
                     style={{ background: AV[(i + j) % AV.length] }}
                     initial={{ scale: 0, x: -10 }}
                     animate={{ scale: 1, x: 0 }}
-                    transition={{ delay: 0.2 + j * 0.06, type: 'spring', stiffness: 400, damping: 20 }}
+                    transition={{ ...m.spatial('fast'), delay: 0.2 + m.stagger(j) }}
                   >
                     {x}
                   </motion.div>

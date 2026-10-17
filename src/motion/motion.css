@@ -1,0 +1,47 @@
+/* CrossWay web motion library styles. Shared by client and admin; keep both copies identical. */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Elevation layer for AnimatedCard: its opacity animates, the shadow is never repainted. */
+.m-elevation {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
+  box-shadow: 0 2px 6px 2px rgba(0, 0, 0, .10), 0 1px 2px rgba(0, 0, 0, .18);
+}
+
+/* MorphButton */
+.m-morph {
+  position: relative; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 48px; height: 40px; padding: 0 24px; border: 0; border-radius: 20px;
+  background: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);
+  font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer;
+}
+.m-morph.is-compact { width: 48px; padding: 0; }
+.m-morph.is-success { background: var(--md-sys-color-success); color: var(--md-sys-color-on-success); }
+.m-morph.is-error { background: var(--md-sys-color-error); color: var(--md-sys-color-on-error); }
+.m-morph:disabled { opacity: .45; cursor: not-allowed; }
+.m-morph-inner { display: inline-flex; align-items: center; gap: 6px; }
+
+/* SuccessBurst */
+.m-burst { position: absolute; left: 50%; top: 50%; width: 0; height: 0; pointer-events: none; z-index: 5; }
+.m-burst-dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; will-change: transform, opacity; }
+
+/* SkeletonShimmer: the highlight moves with transform, never with background-position. */
+.m-skeleton { display: flex; flex-direction: column; border-radius: var(--md-shape-corner-large, 16px); overflow: hidden; }
+.m-skeleton-row { display: flex; align-items: center; gap: 14px; padding: 0 18px; border-bottom: 1px solid var(--md-sys-color-outline-variant); }
+.m-skeleton-dot { width: 36px; height: 36px; border-radius: 18px; flex: none; }
+.m-skeleton-bars { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.m-skeleton-bar { height: 10px; border-radius: 5px; }
+.m-skeleton-bar.short { height: 8px; }
+.m-skeleton-dot, .m-skeleton-bar { position: relative; overflow: hidden; background: var(--md-sys-color-surface-container-high); }
+.m-skeleton-dot::after, .m-skeleton-bar::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, var(--md-sys-color-surface-container-lowest), transparent);
+  animation: m-shimmer 1.2s var(--md-motion-easing-standard, ease) infinite;
+}
+@keyframes m-shimmer { to { transform: translateX(100%); } }
+
+/* View Transitions: the theme toggle reveals the new theme; nothing else uses them. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+@media (prefers-reduced-motion: reduce) {
+  .m-skeleton-dot::after, .m-skeleton-bar::after { animation: none; }
+}

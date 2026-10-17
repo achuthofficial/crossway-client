@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { AV, ini, NFG } from '../data.js';
 import { Act, Icon, itemVariants, PageHead, Stagger, Tag } from '../ui.jsx';
+import { useMotion } from '../motion';
 
 /* ---------------- C15 Support ---------------- */
 const TICKETS = [
@@ -20,6 +21,7 @@ function replyTo(text) {
 }
 
 export function Support() {
+  const m = useMotion();
   const [chat, setChat] = useState([{ me: false, t: 'Hi Neha, the Decathlon-style no-show credit is on your next invoice. Anything else for this weekend?' }]);
   const [msg, setMsg] = useState('');
   const [typing, setTyping] = useState(false);
@@ -59,7 +61,7 @@ export function Support() {
           ))}
         </Stagger>
       </div>
-      <motion.div className="chat" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+      <motion.div className="chat" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ ...m.spatial(), delay: 0.1 }}>
         <div className="row g12">
           <div className="av" style={{ width: 44, height: 44, borderRadius: 22, background: '#34A853' }}>VR</div>
           <div className="stack">
@@ -69,15 +71,15 @@ export function Support() {
         </div>
         <div className="stack g8" style={{ maxHeight: 360, overflowY: 'auto' }}>
           <AnimatePresence initial={false}>
-            {chat.map((m, i) => (
+            {chat.map((bubble, i) => (
               <motion.div
                 key={i}
-                className={'bubble ' + (m.me ? 'me' : 'them')}
-                initial={{ opacity: 0, y: 10, scale: 0.95, originX: m.me ? 1 : 0 }}
+                className={'bubble ' + (bubble.me ? 'me' : 'them')}
+                initial={{ opacity: 0, y: 10, scale: 0.95, originX: bubble.me ? 1 : 0 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                transition={m.spatial('fast')}
               >
-                {m.t}
+                {bubble.t}
               </motion.div>
             ))}
             {typing && (
@@ -101,6 +103,7 @@ export function Support() {
 
 /* ---------------- C13 Team ---------------- */
 export function Team({ s }) {
+  const m = useMotion();
   const owners = s.team.filter(u => u.role === 'Account Owner').length;
   const remove = u => {
     if (u.role === 'Account Owner' && owners <= 1) return s.say("You can't remove the only Account Owner. Add another owner first.");
@@ -124,7 +127,7 @@ export function Team({ s }) {
               className="list-row"
               style={{ padding: '14px 18px', overflow: 'hidden' }}
               initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0, transition: { delay: i * 0.04 } }}
+              animate={{ opacity: 1, y: 0, transition: { ...m.spatial(), delay: m.stagger(i) } }}
               exit={{ opacity: 0, x: -40, height: 0, paddingTop: 0, paddingBottom: 0 }}
             >
               <div className="av" style={{ background: AV[i % AV.length] }}>{ini(u.name)}</div>
@@ -148,7 +151,7 @@ export function Team({ s }) {
                   <Icon name="pending_actions" />
                   <span style={{ flex: 1, fontSize: 14 }}>{a.t}</span>
                   <Act kind="p" label="Approve" on={() => decide(a, true)} />
-                  <button type="button" className="btn sm" style={{ border: '1px solid #594300', background: 'transparent', color: '#594300' }} onClick={() => decide(a, false)}>Decline</button>
+                  <button type="button" className="btn sm" style={{ border: '1px solid var(--warn-fg)', background: 'transparent', color: 'var(--warn-fg)' }} onClick={() => decide(a, false)}>Decline</button>
                 </motion.div>
               ))}
             </AnimatePresence>

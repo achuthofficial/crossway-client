@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { DATES, HOURS, inr, LOCS, quote, RATES, T } from '../data.js';
 import { Icon } from '../ui.jsx';
+import { useMotion } from '../motion';
 
 /** Very small natural-language parser for the "Describe it" box. */
 function parse(text) {
@@ -32,6 +33,7 @@ const Field = ({ label, color, children }) => (
 );
 
 export default function Book({ s }) {
+  const m = useMotion();
   const [copilot, setCopilot] = useState('');
   const { f, R } = s;
   const q = quote(f);
@@ -115,7 +117,7 @@ export default function Book({ s }) {
               {DATES.map(o => <option key={o.id} value={o.id}>{o.label}</option>)}
             </select>
           </Field>
-          <Field label="Headcount" color={overSupply ? '#7A5900' : undefined}>
+          <Field label="Headcount" color={overSupply ? 'var(--warn-text)' : undefined}>
             <div className={'stepper' + (overSupply ? ' warn' : '')}>
               <motion.button whileTap={{ scale: 0.85 }} type="button" className="icon-btn" aria-label="Fewer" onClick={() => s.setF({ count: Math.max(1, f.count - 1) })}><Icon name="remove" /></motion.button>
               <AnimatePresence mode="popLayout" initial={false}>
@@ -126,12 +128,12 @@ export default function Book({ s }) {
               <motion.button whileTap={{ scale: 0.85 }} type="button" className="icon-btn" aria-label="More" onClick={() => s.setF({ count: Math.min(50, f.count + 1) })}><Icon name="add" /></motion.button>
             </div>
           </Field>
-          <Field label="Start" color={timeBad ? '#B3261E' : undefined}>
+          <Field label="Start" color={timeBad ? 'var(--danger)' : undefined}>
             <select className={'big-select' + (timeBad ? ' bad' : '')} value={f.start} onChange={e => s.setF({ start: e.target.value })}>
               {HOURS.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
             </select>
           </Field>
-          <Field label="End" color={timeBad ? '#B3261E' : undefined}>
+          <Field label="End" color={timeBad ? 'var(--danger)' : undefined}>
             <select className={'big-select' + (timeBad ? ' bad' : '')} value={f.end} onChange={e => s.setF({ end: e.target.value })}>
               {HOURS.map(o => <option key={o.v} value={o.v}>{o.l}</option>)}
             </select>
@@ -139,7 +141,7 @@ export default function Book({ s }) {
         </div>
 
         <label className="row g12" style={{ cursor: 'pointer', fontSize: 15 }}>
-          <input type="checkbox" checked={f.recurring} onChange={() => s.setF({ recurring: !f.recurring })} style={{ width: 20, height: 20, accentColor: '#0B57D0' }} />
+          <input type="checkbox" checked={f.recurring} onChange={() => s.setF({ recurring: !f.recurring })} style={{ width: 20, height: 20, accentColor: 'var(--brand)' }} />
           Repeat every week for 4 weeks
         </label>
 
@@ -153,7 +155,7 @@ export default function Book({ s }) {
                 style={{ background: T[sv][0], color: T[sv][1] }}
                 initial={{ opacity: 0, y: -6, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.15 } }}
+                exit={{ opacity: 0, scale: 0.98, transition: m.effects('fast') }}
               >
                 <Icon name={icon} /><span>{t}</span>
               </motion.div>
@@ -162,7 +164,7 @@ export default function Book({ s }) {
         </motion.div>
       </div>
 
-      <motion.aside className="quote" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+      <motion.aside className="quote" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ ...m.spatial(), delay: 0.1 }}>
         <h2 className="h18">Price before you confirm</h2>
         {lines.map(([k, v]) => (
           <div key={k} className="row between g12" style={{ fontSize: 14 }}>
@@ -171,10 +173,10 @@ export default function Book({ s }) {
           </div>
         ))}
         <div className="small muted">Worker gets {inr(q.r.pay)}/h, paid daily</div>
-        <div style={{ height: 1, background: '#C4C7C5' }} />
+        <div style={{ height: 1, background: 'var(--line)' }} />
         <div className="row between" style={{ alignItems: 'baseline' }}>
           <span style={{ fontSize: 15, fontWeight: 500 }}>Total</span>
-          <motion.span key={q.total} initial={{ scale: 1.08, color: '#0B57D0' }} animate={{ scale: 1, color: '#1F1F1F' }} transition={{ duration: 0.4 }} style={{ fontSize: 28 }}>
+          <motion.span key={q.total} initial={{ scale: 1.08 }} animate={{ scale: 1 }} transition={m.spatial('fast')} style={{ fontSize: 28, display: 'inline-block', transformOrigin: 'right center' }}>
             {inr(q.total)}
           </motion.span>
         </div>

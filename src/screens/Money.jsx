@@ -1,12 +1,14 @@
 import { motion } from 'motion/react';
 import { NFG, T } from '../data.js';
 import { CountUp, Fill, Icon, itemVariants, PageHead, Stagger, Tag } from '../ui.jsx';
+import { IconMorph, SkeletonShimmer, useFirstLoad, useMotion } from '../motion';
 
 /* ---------------- C9 Invoices ---------------- */
 export function Invoices({ s }) {
+  const loading = useFirstLoad('invoices');
   const out = s.inv.filter(i => i.pay).reduce((a, i) => a + i.v, 0);
   const cp = Math.round((out / 200000) * 100);
-  const bar = cp >= 100 ? '#B3261E' : cp >= 80 ? '#F9AB00' : '#0B57D0';
+  const bar = cp >= 100 ? 'var(--danger)' : cp >= 80 ? '#F9AB00' : 'var(--brand)';
   const outText = '₹' + out.toLocaleString('en-IN');
 
   return (
@@ -20,14 +22,15 @@ export function Invoices({ s }) {
         <motion.div variants={itemVariants} className="stack g6" style={{ borderRadius: 20, padding: 18, background: 'var(--surface-2)' }}>
           <span className="small muted">Credit used</span>
           <span style={{ fontSize: 28 }}><CountUp key={cp} value={Math.min(cp, 120) + '%'} /></span>
-          <div className="track" style={{ background: '#fff' }}><Fill width={Math.min(cp, 100) + '%'} color={bar} /></div>
+          <div className="track" style={{ background: 'var(--surface)' }}><Fill width={Math.min(cp, 100) + '%'} color={bar} /></div>
         </motion.div>
         <motion.div variants={itemVariants} className="stack g4" style={{ borderRadius: 20, padding: 18, background: 'var(--surface-2)' }}>
           <span className="small muted">Terms</span>
           <span style={{ fontSize: 20 }}>Net 15 · ₹2,00,000 limit</span>
         </motion.div>
       </Stagger>
-      <Stagger className="list20">
+      <SkeletonShimmer loading={loading} lines={5} height={64} style={{ border: '1px solid var(--line)', borderRadius: 20 }}>
+        <Stagger className="list20">
         {s.inv.map(i => (
           <motion.div key={i.id} layout variants={itemVariants} className="list-row" style={{ padding: '14px 18px' }}>
             <Icon name={i.no.startsWith('CN') ? 'receipt' : 'description'} className="muted" />
@@ -54,12 +57,14 @@ export function Invoices({ s }) {
           </motion.div>
         ))}
       </Stagger>
+      </SkeletonShimmer>
     </div>
   );
 }
 
 /* ---------------- C10 Payroll ---------------- */
 export function Payroll({ s }) {
+  const m = useMotion();
   const { pr, setPr, R } = s;
   const steps = [
     { l: 'Attendance inputs', s: pr.inputs ? '18 of 18 uploaded' : '16 of 18 uploaded · missing: Sameer P., Anitha K.', done: pr.inputs, warn: !pr.inputs, act: 'Upload missing', on: () => { setPr({ ...pr, inputs: true }); s.say('2 inputs uploaded. Payroll recomputed.'); } },
@@ -72,21 +77,23 @@ export function Payroll({ s }) {
       <PageHead eyebrow="C10 · Payroll portal" title="October payroll" lead="18 permanent staff on CrossWay Payroll · cut-off 25 Oct · salaries credited 1 Nov" />
       <Stagger className="list20">
         {steps.map(p => {
-          const bg = p.done ? '#0B57D0' : p.warn ? '#FEEFC3' : '#E9EEF6';
-          const fg = p.done ? '#fff' : p.warn ? '#594300' : '#444746';
+          const bg = p.done ? 'var(--brand)' : p.warn ? 'var(--warn-bg)' : 'var(--surface-3)';
+          const fg = p.done ? 'var(--on-brand)' : p.warn ? 'var(--warn-fg)' : 'var(--muted)';
           return (
             <motion.div key={p.l} variants={itemVariants} className="list-row" style={{ padding: '16px 18px' }}>
               <motion.div
+                key={String(p.done) + String(p.warn)}
                 className="step-dot"
-                style={{ width: 32, height: 32, borderRadius: 16 }}
-                animate={{ backgroundColor: bg, color: fg, scale: p.done ? [1, 1.2, 1] : 1 }}
-                transition={{ duration: 0.4 }}
+                style={{ width: 32, height: 32, borderRadius: 16, background: bg, color: fg }}
+                initial={{ scale: 0.6 }}
+                animate={{ scale: 1 }}
+                transition={m.spatial('fast')}
               >
-                <Icon name={p.done ? 'check' : p.warn ? 'priority_high' : 'circle'} />
+                <IconMorph icon={p.done ? 'check' : p.warn ? 'priority_high' : 'circle'} size={18} />
               </motion.div>
               <div className="stack" style={{ flex: '1 1 240px' }}>
                 <span style={{ fontSize: 15, fontWeight: 500 }}>{p.l}</span>
-                <span className="small" style={{ color: p.warn ? '#7A5900' : '#444746' }}>{p.s}</span>
+                <span className="small" style={{ color: p.warn ? 'var(--warn-text)' : 'var(--muted)' }}>{p.s}</span>
               </div>
               {p.act && !p.done && (
                 <motion.button whileTap={{ scale: 0.95 }} type="button" className="btn md btn-filled" disabled={p.dis} onClick={p.on}>{p.act}</motion.button>
@@ -119,7 +126,7 @@ export function Vault({ s }) {
             <span style={{ fontSize: 15, fontWeight: 500 }}>{t}</span>
             <span className="small" style={{ color: NFG[sv], lineHeight: 1.4 }}>{sub}</span>
             <button type="button" className="btn sm btn-outline" style={{ alignSelf: 'flex-start' }} disabled={sv === 'mute'} onClick={() => s.say('Downloading ' + t + '.')}>
-              {sv === 'mute' && <span className="spinner" style={{ borderColor: 'rgba(11,87,208,.3)', borderTopColor: '#0B57D0' }} />}
+              {sv === 'mute' && <span className="spinner" style={{ borderColor: 'rgba(11,87,208,.3)', borderTopColor: 'var(--brand)' }} />}
               {act}
             </button>
           </motion.div>
