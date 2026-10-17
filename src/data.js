@@ -11,15 +11,15 @@ export const HOURS=Array.from({length:24},(_,i)=>({v:String(i),l:(i%12||12)+':00
 export const ini=n=>n.split(' ').map(w=>w[0]).join('').slice(0,2);
 export const inr=n=>'₹'+Math.round(n).toLocaleString('en-IN');
 export const LIVE=[
-{id:'l1',name:'Ravi Kumar',role:'Waiter',loc:'Indiranagar',time:'12:00–20:00',status:'On site',sev:'ok',note:'Checked in 11:56 · selfie verified'},
-{id:'l2',name:'Shabana K.',role:'Kitchen helper',loc:'Indiranagar',time:'12:00–20:00',status:'On site',sev:'ok',note:'Checked in 12:02'},
+{id:'l1',name:'Ravi Kumar',role:'Waiter',loc:'Indiranagar',time:'12:00–20:00',status:'On site',sev:'ok',note:'Checked in 11:56 · site QR + selfie'},
+{id:'l2',name:'Shabana K.',role:'Kitchen helper',loc:'Indiranagar',time:'12:00–20:00',status:'On site',sev:'ok',note:'Checked in 12:02 · site QR'},
 {id:'l3',name:'Kiran B.',role:'Barista',loc:'Koramangala',time:'16:00–22:00',status:'Late',sev:'warn',note:'18 min late. Last seen 4 km away. A backup is on standby.',kind:'late'},
 {id:'l4',name:'Neha P.',role:'Cashier',loc:'HSR Layout',time:'15:30–21:30',status:'Absent',sev:'bad',note:'Did not check in. Free replacement window ends at 16:15. You are not billed for this slot.',kind:'absent'},
 {id:'l5',name:'Arun T.',role:'Kitchen helper',loc:'Koramangala',time:'15:30–23:30',status:'Replacement',sev:'info',note:'Replacing Suresh M. ETA 9 min. Billed from actual check-in.',kind:'enroute'},
 {id:'l6',name:'Deepa R.',role:'Waiter',loc:'HSR Layout',time:'17:00–23:00',status:'Starts 17:00',sev:'mute',note:'Confirmed · women-safety cab home booked (shift ends 23:00)',kind:'upcoming'}];
 export const TS=[
-{id:'t1',name:'Ravi Kumar',role:'Waiter',loc:'Indiranagar',date:'17 Oct',inout:'In 11:58 · Out 20:04',hours:'8.0 h',max:8,note:'Clean',sev:'ok'},
-{id:'t2',name:'Shabana K.',role:'Kitchen helper',loc:'Indiranagar',date:'17 Oct',inout:'In 12:00 · Out 20:00',hours:'8.0 h',max:8,note:'Clean',sev:'ok'},
+{id:'t1',name:'Ravi Kumar',role:'Waiter',loc:'Indiranagar',date:'17 Oct',inout:'In 11:58 · Out 20:04 · break 30 min',hours:'8.0 h',max:8,note:'Clean',sev:'ok'},
+{id:'t2',name:'Shabana K.',role:'Kitchen helper',loc:'Indiranagar',date:'17 Oct',inout:'In 12:00 · Out 20:00 · break 28 min',hours:'8.0 h',max:8,note:'Clean',sev:'ok'},
 {id:'t3',name:'Lakshmi Devi',role:'Housekeeping',loc:'Koramangala',date:'17 Oct',inout:'In 07:02 · Out 18:30',hours:'8 h + 3.5 h OT',max:11.5,note:'Overtime wasn\'t pre-approved. Approve or reduce it individually.',sev:'warn',ot:true},
 {id:'t4',name:'Kiran B.',role:'Barista',loc:'Koramangala',date:'17 Oct',inout:'In 16:02 · Out 22:04',hours:'6.0 h',max:6,note:'Clean',sev:'ok'},
 {id:'t5',name:'Manjunath S.',role:'Waiter',loc:'HSR Layout',date:'15 Oct',inout:'In 10:00 · Out 18:00',hours:'8.0 h',max:8,note:'Dispute window closed. Auto-approved on 17 Oct.',sev:'mute',locked:true}];
@@ -42,3 +42,8 @@ export function quote(f){
   const base=r.r*hrs*f.count;const sur=urgent?base*.2:peak?base*.15:0;const sub=base+sur;const gst=sub*.18;const occ=f.recurring?4:1;const total=(sub+gst)*occ;
   return {r,d,hrs,past,urgent,night,peak,base,sur,sub,gst,total,occ,supply:r.sup[f.loc],long:hrs>12};
 }
+
+// Attendance notifications already received today (newest first).
+export const NOTES=[
+{key:'n2',kind:'in',title:'Shabana K. checked in at Indiranagar',body:'Scanned the site QR at 12:02 · Kitchen helper · shift 12:00–20:00',icon:'qr_code_scanner',sev:'ok',time:'12:02',read:true},
+{key:'n1',kind:'in',title:'Ravi Kumar checked in at Indiranagar',body:'Scanned the site QR at 11:56 · Waiter · shift 12:00–20:00',icon:'qr_code_scanner',sev:'ok',time:'11:56',read:true}];

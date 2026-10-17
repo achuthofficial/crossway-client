@@ -456,3 +456,13 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 
 .pipe-placeholder { height: 72px; border-radius: 14px; border: 2px dashed var(--outline); transform-origin: top; }
 .m-morph.pay-btn.is-idle { background: var(--brand); color: var(--on-brand); }
 .m-morph.pay-btn.is-error { background: var(--danger); color: var(--md-sys-color-on-error); }
+
+/* Attendance notifications (top-bar bell) */
+.icon-btn { position: relative; }
+.notif-panel { position: absolute; right: 0; top: 48px; z-index: 70; width: min(380px, calc(100vw - 24px)); background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, .18); transform-origin: top right; }
+.notif-item { padding: 10px 6px; border-radius: 12px; }
+.notif-item + .notif-item { border-top: 1px solid var(--line); }
+.notif-pref { font-size: 13px; padding: 4px; cursor: pointer; }
+.notif-pref input { accent-color: var(--primary); width: 16px; height: 16px; }
+.site-tools { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; }
+@media (max-width: 960px) { .site-tools { grid-template-columns: minmax(0, 1fr); } }

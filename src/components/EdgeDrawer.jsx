@@ -16,6 +16,8 @@ const EDGES = [
   ['C6', 'Absent worker → free replacement', { screen: 'live' }],
   ['C6', 'Late worker → swap with standby', { screen: 'live' }],
   ['C6', 'Early release and late cancellation fee', { screen: 'live' }],
+  ['C6', 'Site QR check-in / check-out, breaks and overruns → you get notified', { screen: 'live' }],
+  ['C6', 'Break length: 30 min by default, can only be increased (to 90)', { screen: 'live' }],
   ['C7', "OT not pre-approved can't be bulk approved", { screen: 'timesheets' }],
   ['C7', 'Dispute with hours validation', { screen: 'timesheets' }],
   ['C7', 'Dispute window closed → auto-approved', { screen: 'timesheets' }],
